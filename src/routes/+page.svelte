@@ -6,7 +6,7 @@
 	import TimeGrid from '@event-calendar/time-grid';
 	import Toast from 'flowbite-svelte/Toast.svelte';
 	import { slide } from 'svelte/transition';
-	import { InfoCircleSolid } from 'flowbite-svelte-icons';
+	import InfoCircleSolid from 'flowbite-svelte-icons/InfoCircleSolid.svelte';
 	import { endLimit, startLimit } from '$lib/date-management';
 
 	// Svelte assigns this via magic
