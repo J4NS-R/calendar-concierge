@@ -4,6 +4,7 @@ svelte-build:
   #    - if: $CI_COMMIT_BRANCH == 'main'
   image: node:22-alpine
   script:
+    - mv .env.example .env
     - npm install
     - npm run build
     - npm prune --prod
