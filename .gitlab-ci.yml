@@ -7,7 +7,6 @@ svelte-build:
     - mv .env.example .env
     - npm install
     - npm run build
-    - npm prune --prod
   artifacts:
     paths:
       - build/
