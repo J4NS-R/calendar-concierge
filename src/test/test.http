@@ -1,0 +1,7 @@
+GET http://localhost:5173/
+
+
+
+######
+
+POST http://localhost:5173/refresh-calendars
