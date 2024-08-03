@@ -7,7 +7,7 @@
 	import Toast from 'flowbite-svelte/Toast.svelte';
 	import { slide } from 'svelte/transition';
 	import { InfoCircleSolid } from 'flowbite-svelte-icons';
-	import {startLimit, endLimit} from '$lib/date-management'
+	import { endLimit, startLimit } from '$lib/date-management';
 
 	// Svelte assigns this via magic
 	let calendarElement;
@@ -36,15 +36,18 @@
 		nowIndicator: true,
 		height: '80vh',
 		datesSet: onCalViewChange,
+		scrollTime: '09:00:00'
 	};
 
 </script>
 
-
-<article class="prose lg:prose-xl">
-  <h2>Calendar Concierge</h2>
-	<p>Book a meeting with me!</p>
-</article>
+<h1 class="font-bold">Meet with Jans</h1>
+<p class="mt-2">
+	Feel free to send a meeting invite to
+	<span class="underline font-mono">jans (at) rauten.co.za</span>
+	in any gap in my calendar.
+</p>
+<p class="mb-2">In-person meetings only by arrangement.</p>
 
 <Toast bind:toastStatus transition={slide} position="top-right" color="blue">
 	<InfoCircleSolid slot="icon" class="w-5 h-5" />
@@ -56,6 +59,8 @@
 	{/if}
 </Toast>
 
-<Calendar bind:this={calendarElement} {plugins} {options} />
+<div>
+	<Calendar bind:this={calendarElement} {plugins} {options} />
+</div>
 
 <p class="mt-4">Timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone}</p>

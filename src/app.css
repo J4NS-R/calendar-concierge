@@ -16,4 +16,6 @@ a {
 }
 body {
     @apply ml-6 mr-6 mt-2;
+    @apply font-sans dark:text-gray-300;
+    @apply dark:bg-gray-800;
 }
