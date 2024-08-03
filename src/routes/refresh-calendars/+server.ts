@@ -1,8 +1,9 @@
 import {db} from '$lib/server/db';
 import * as schema from '$lib/server/schema';
-import ical from 'node-ical';
+// @ts-expect-error IDK why this import is flagged
 import ICAL from "ical.js";
 import {eq} from 'drizzle-orm'
+import {startLimit, endLimit} from '$lib/date-management';
 
 function getEventDetails(ev: [any]){
 	function getDeet(ev: [any], property: string): string{
@@ -31,20 +32,14 @@ export async function POST(){
 			headers.set('Authorization', `Basic ${btoa(userPass)}`);
 		}
 
-		const resp = await fetch(remoteIcs.url, {
-			method: 'GET',
-			headers,
-		});
+		// Build fetch URL
+		const separator = remoteIcs.url.indexOf('?') > -1 ? '&' : '?';
+		const url = `${remoteIcs.url}${separator}start-min=${startLimit.toISOString().substring(0, 10)}&end-max=${endLimit.toISOString().substring(0, 10)}`
+		const resp = await fetch(url, { method: 'GET', headers });
 
 		// https://github.com/kewisch/ical.js
 		const parsed = ICAL.parse(await resp.text());
 		const allEvents = parsed[2];
-
-		// Define time limits
-		const startLimit = new Date();
-		startLimit.setDate(startLimit.getDate()-7);
-		const endLimit = new Date();
-		endLimit.setDate(endLimit.getDate()+14);
 
 		const calData = [];
 		for (const ev of allEvents) {
