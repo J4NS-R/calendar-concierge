@@ -6,8 +6,8 @@ import { eq } from 'drizzle-orm';
 import { endLimit, startLimit } from '$lib/date-management';
 import { env } from '$env/dynamic/private';
 
-function getEventDetails(ev: [any]){
-	function getDeet(ev: [any], property: string): string{
+function getEventDetails(ev: []) {
+	function getDeet(ev: [], property: string): string {
 		const filtered = ev.filter(deet => deet[0] === property);
 		if (filtered.length === 0){
 			throw new Error(`Could not find property ${property} in event!`);
@@ -56,7 +56,8 @@ export async function POST({ request }) {
 			try {
 				cleanEvent = getEventDetails(ev[1]);
 			}catch(err){
-				console.log('Warning: skipping event because it\'s missing a required property');
+				// @ts-expect-error err is any
+				console.log(`Warning: skipping event. Error: ${err.message}`);
 				continue
 			}
 
@@ -70,7 +71,7 @@ export async function POST({ request }) {
 		await db.delete(schema.busyEvents).where(eq(schema.busyEvents.remoteIcsId, remoteIcs.id));
 		// Insert new events
 		for(const ev of calData){
-			console.log('Inserting event '+ev.summary);
+			console.log(`Inserting event ${ev.summary} @ ${ev.start.toISOString()}`);
 			await db.insert(schema.busyEvents).values({
 				remoteIcsId: remoteIcs.id,
 				start: ev.start,
