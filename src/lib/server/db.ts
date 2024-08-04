@@ -1,11 +1,11 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import { VITE_PG_DB, VITE_PG_HOST, VITE_PG_PASS, VITE_PG_USER } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import * as schema from './schema';
 
 
 const client = postgres(
-	`postgres://${VITE_PG_USER}:${VITE_PG_PASS}@${VITE_PG_HOST}:5432/${VITE_PG_DB}`,
+	`postgres://${env.VITE_PG_USER}:${env.VITE_PG_PASS}@${env.VITE_PG_HOST}:5432/${env.VITE_PG_DB}`,
 	{ max: 1 }
 );
 

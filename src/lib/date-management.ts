@@ -1,7 +1,7 @@
-import {PUBLIC_FUTURE_DAYS, PUBLIC_PAST_DAYS} from '$env/static/public';
+import { env } from '$env/dynamic/public';
 
 // Define time limits
 export const startLimit = new Date();
-startLimit.setDate(startLimit.getDate() - parseInt(PUBLIC_PAST_DAYS));
+startLimit.setDate(startLimit.getDate() - parseInt(env.PUBLIC_PAST_DAYS));
 export const endLimit = new Date();
-endLimit.setDate(endLimit.getDate() + parseInt(PUBLIC_FUTURE_DAYS));
+endLimit.setDate(endLimit.getDate() + parseInt(env.PUBLIC_FUTURE_DAYS));

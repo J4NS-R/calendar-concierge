@@ -1,5 +1,9 @@
 # Calendar Concierge
 
+## Config
+
+Via runtime env vars. See [.env.example](.env.example).
+
 ## Development
 
 ```sh
