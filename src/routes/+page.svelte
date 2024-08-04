@@ -41,6 +41,11 @@
 
 </script>
 
+<svelte:head>
+	<title>Meet with Jans</title>
+	<meta name="description" content="Check Jans's calendar for availability" />
+</svelte:head>
+
 <h1 class="font-bold">Meet with Jans</h1>
 <p class="mt-2">
 	Feel free to send a meeting invite to

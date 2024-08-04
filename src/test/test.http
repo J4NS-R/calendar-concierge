@@ -3,3 +3,4 @@ GET http://localhost:5173/
 ######
 
 POST http://localhost:5173/refresh-calendars
+X-API-Key: 84fe43b23c7ef806f0d5f82de8d1477c
