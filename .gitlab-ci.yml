@@ -1,0 +1,33 @@
+svelte-build:
+  stage: build
+  #  rules:
+  #    - if: $CI_COMMIT_BRANCH == 'main'
+  image: node:22-alpine
+  script:
+    - npm install
+    - npm run build
+    - npm ci --omit dev
+  artifacts:
+    paths:
+      - node_modules/
+      - build/
+      - package*.json
+
+svelte-docker:
+  stage: deploy
+  needs:
+    - svelte-build
+  #  rules:
+  #    - if: $CI_COMMIT_BRANCH == 'main'
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  variables:
+    IMG_PREFIX: registry.gitlab.com/j4ns-r/calendar-concierge
+  before_script:
+    - apk add jq
+  script:
+    - version=$(cat package.json | jq -r ".version")
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+    - docker build -t $IMG_PREFIX/calcon:$version .
+    - docker push $IMG_PREFIX/calcon:$version
