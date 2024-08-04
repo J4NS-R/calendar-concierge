@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY build build/
 COPY package*.json .
+COPY node_modules node_modules/
 
 EXPOSE 3000
 
