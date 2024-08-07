@@ -1,7 +1,7 @@
 svelte-build:
   stage: build
-  #  rules:
-  #    - if: $CI_COMMIT_BRANCH == 'main'
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
   image: node:22-alpine
   script:
     - npm install
@@ -17,8 +17,8 @@ svelte-docker:
   stage: deploy
   needs:
     - svelte-build
-  #  rules:
-  #    - if: $CI_COMMIT_BRANCH == 'main'
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
   image: docker:24.0.5
   services:
     - docker:24.0.5-dind

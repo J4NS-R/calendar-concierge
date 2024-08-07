@@ -66,7 +66,7 @@
 {/if}
 <p class="mb-2 text-sm">In-person meetings only by arrangement.</p>
 
-<Toast bind:toastStatus transition={slide} position="top-right" color="blue">
+<Toast bind:toastStatus transition={slide} position="top-right" color="blue" class="z-50">
 	<InfoCircleSolid slot="icon" class="w-5 h-5" />
 	{#if warningMsg === 'early'}
 		Cannot go further back into the calendar history.
