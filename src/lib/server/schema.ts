@@ -1,6 +1,6 @@
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { pgTable, serial, text, integer, timestamp} from 'drizzle-orm/pg-core';
+import { integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
 
 export const remoteIcs = pgTable('remote_ics', {
 	// https://orm.drizzle.team/docs/column-types/pg
@@ -12,7 +12,7 @@ export const remoteIcs = pgTable('remote_ics', {
 
 export const busyEvents = pgTable('busy_events', {
 	id: serial('id').primaryKey(),
-	remoteIcsId: integer('remote_ics_id').references(() => remoteIcs.id),
+	remoteIcsId: integer('remote_ics_id').notNull().references(() => remoteIcs.id, { onDelete: 'cascade' }),
 	start: timestamp('start').notNull(),
 	end: timestamp('end').notNull(),
 });

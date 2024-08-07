@@ -5,6 +5,7 @@ WORKDIR /app
 COPY build build/
 COPY package*.json .
 COPY node_modules node_modules/
+COPY drizzle drizzle/
 
 EXPOSE 3000
 
