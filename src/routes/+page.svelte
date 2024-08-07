@@ -1,5 +1,6 @@
 <script>
-	export let data;
+	import { onMount } from 'svelte';
+	import { env } from '$env/dynamic/public';
 	// @ts-expect-error import exists
 	import Calendar from '@event-calendar/core';
 	// @ts-expect-error import exists
@@ -10,51 +11,62 @@
 	import { endLimit, startLimit } from '$lib/date-management';
 
 	// Svelte assigns this via magic
+	export let data;
+	/** @type Calendar */
 	let calendarElement;
 	let toastStatus = false;
-	let warningMsg = "";
+	let warningMsg = '';
+	// Determined at runtime
+	let isPortrait = false;
+	const calPlugins = [TimeGrid];
+	let calOptions;
 
-	function onCalViewChange(info){
-		if (info.end > endLimit){
+	function onCalViewChange(info) {
+		if (info.end > endLimit) {
 			calendarElement.prev();
 			toastStatus = true;
 			warningMsg = 'late';
-		}else if (info.start < startLimit){
+		} else if (info.start < startLimit) {
 			calendarElement.next();
 			toastStatus = true;
 			warningMsg = 'early';
 		}
 	}
 
-	// https://github.com/vkurko/calendar?tab=readme-ov-file
-	let plugins = [TimeGrid];
-	let options = {
-		view: 'timeGridWeek',
-		events: data.busyEvents.map(ev => ({...ev, title: 'Busy'})),
-		editable: false,
-		//hiddenDays: [0, 6], // weekend
-		nowIndicator: true,
-		height: '80vh',
-		datesSet: onCalViewChange,
-		scrollTime: '09:00:00'
-	};
+	onMount(() => {
+		isPortrait = window.innerWidth < window.innerHeight;
+
+		// https://github.com/vkurko/calendar?tab=readme-ov-file
+		calOptions = {
+			view: 'timeGridWeek',
+			events: data.busyEvents.map(ev => ({ ...ev, title: 'Busy' })),
+			editable: false,
+			hiddenDays: isPortrait ? [0, 6] : [], // hide weekend on mobile
+			nowIndicator: true,
+			height: '80vh',
+			datesSet: onCalViewChange,
+			scrollTime: '09:00:00'
+		};
+	});
 
 </script>
 
 <svelte:head>
-	<title>Meet with Jans</title>
-	<meta name="description" content="Check Jans's calendar for availability" />
+	<title>Meet with {env.PUBLIC_NAME}</title>
+	<meta name="description" content="Check {env.PUBLIC_NAME}'s calendar for availability" />
 </svelte:head>
 
-<h1 class="font-bold">Meet with Jans</h1>
-<p class="mt-2">
-	Feel free to send a meeting invite to
-	<span class="underline font-mono">jans (at) rauten.co.za</span>
-	in any gap in my calendar.
-</p>
-<p class="mb-2">In-person meetings only by arrangement.</p>
+<h2 class="font-bold">Meet with {env.PUBLIC_NAME}</h2>
+{#if env.PUBLIC_EMAIL}
+	<p class="mt-2 text-sm">
+		Feel free to send a meeting invite to
+		<span class="underline font-mono">{env.PUBLIC_EMAIL}</span>
+		in any gap in my calendar.
+	</p>
+{/if}
+<p class="mb-2 text-sm">In-person meetings only by arrangement.</p>
 
-<Toast bind:toastStatus transition={slide} position="top-right" color="blue">
+<Toast bind:toastStatus transition={slide} position="top-right" color="blue" class="z-50">
 	<InfoCircleSolid slot="icon" class="w-5 h-5" />
 	{#if warningMsg === 'early'}
 		Cannot go further back into the calendar history.
@@ -65,7 +77,12 @@
 </Toast>
 
 <div>
-	<Calendar bind:this={calendarElement} {plugins} {options} />
+	<Calendar bind:this={calendarElement} plugins={calPlugins} options={calOptions} />
 </div>
-
-<p class="mt-4">Timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone}</p>
+<div class="flex mt-2">
+	<p>Timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone}</p>
+	<div class="flex-grow" />
+	<p>Powered by
+		<a href="https://gitlab.com/J4NS-R/calendar-concierge" target="_blank" class="text-blue-300">Calendar Concierge</a>
+	</p>
+</div>
