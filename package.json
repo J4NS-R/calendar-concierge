@@ -1,7 +1,7 @@
 {
 	"name": "calendar-concierge",
 	"description": "Fetch ICS calendars and display aggregated free/busy info",
-	"version": "0.0.2",
+	"version": "1.0.0",
 	"private": false,
 	"author": {
 		"name": "Jans Rautenbach",

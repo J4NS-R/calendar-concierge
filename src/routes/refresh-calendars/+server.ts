@@ -5,8 +5,9 @@ import ICAL from 'ical.js';
 import { eq } from 'drizzle-orm';
 import { endLimit, startLimit } from '$lib/date-management';
 import { env } from '$env/dynamic/private';
+import type { CleanEvent } from '$lib/types';
 
-function getEventDetails(ev: []) {
+function getEventDetails(ev: []): CleanEvent {
 	function getDeet(ev: [], property: string): string {
 		const filtered = ev.filter(deet => deet[0] === property);
 		if (filtered.length === 0){
@@ -19,6 +20,11 @@ function getEventDetails(ev: []) {
 	const start = new Date(getDeet(ev, 'dtstart'));
 	const end = new Date(getDeet(ev, 'dtend'));
 	return {summary, start, end};
+}
+
+function durationH(ev: CleanEvent): number {
+	const durMillis = ev.end.getTime() - ev.start.getTime();
+	return durMillis / (1000 * 60 * 60);
 }
 
 // TODO job manager with something like https://docs.quirrel.dev/getting-started/next-js
@@ -61,7 +67,7 @@ export async function POST({ request }) {
 				continue
 			}
 
-			if (cleanEvent.end >= startLimit && cleanEvent.start <= endLimit) {
+			if (cleanEvent.end >= startLimit && cleanEvent.start <= endLimit && durationH(cleanEvent) <= 23) {
 				calData.push(cleanEvent);
 			}
 		}
