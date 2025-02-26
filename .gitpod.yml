@@ -1,0 +1,10 @@
+tasks:
+  - init: npm install
+    command: |
+      cp .env.example .env.local
+      docker compose -f src/test/docker-compose.yaml --env-file .env.local up -d --wait
+      npm run dev
+
+ports:
+  - name: app
+    port: 5173

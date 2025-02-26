@@ -6,19 +6,26 @@ import { eq } from 'drizzle-orm';
 import { endLimit, startLimit } from '$lib/date-management';
 import { env } from '$env/dynamic/private';
 import type { CleanEvent } from '$lib/types';
+import { fromZonedTime } from 'date-fns-tz';
 
 function getEventDetails(ev: []): CleanEvent {
-	function getDeet(ev: [], property: string): string {
+	function getDeet(ev: [], property: string): string|Date {
 		const filtered = ev.filter(deet => deet[0] === property);
 		if (filtered.length === 0){
 			throw new Error(`Could not find property ${property} in event!`);
 		}
-		return filtered[0][3];
+		if (filtered[0][2] === "date-time"){
+			const tzName = filtered[0][1]['tzid'];
+			const dateStr = filtered[0][3];
+			return fromZonedTime(dateStr, tzName);
+		}else{
+			return filtered[0][3];
+		}
 	}
 
-	const summary = getDeet(ev, 'summary');
-	const start = new Date(getDeet(ev, 'dtstart'));
-	const end = new Date(getDeet(ev, 'dtend'));
+	const summary = getDeet(ev, 'summary') as string;
+	const start = getDeet(ev, 'dtstart') as Date;
+	const end = getDeet(ev, 'dtend') as Date;
 	return {summary, start, end};
 }
 
