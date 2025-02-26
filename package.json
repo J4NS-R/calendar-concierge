@@ -1,7 +1,7 @@
 {
 	"name": "calendar-concierge",
 	"description": "Fetch ICS calendars and display aggregated free/busy info",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"private": false,
 	"author": {
 		"name": "Jans Rautenbach",
@@ -47,6 +47,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"date-fns-tz": "^3.2.0",
 		"drizzle-orm": "^0.32.1",
 		"ical.js": "^2.0.1",
 		"postgres": "^3.4.4"
