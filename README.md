@@ -17,7 +17,9 @@ Insert an ICS url and optionally basic auth creds into the `remote_ics` table af
 ## Development
 
 ```sh
-npm run dev
+cp .env.example .env.local  # edit as needed
+docker compose -f src/test/docker-compose.yaml --env-file .env.local up -d --wait
+npm run dev  # http://localhost:5173/
 ```
 
 ### DB schema changes
