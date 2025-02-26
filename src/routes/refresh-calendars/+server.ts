@@ -8,24 +8,34 @@ import { env } from '$env/dynamic/private';
 import type { CleanEvent } from '$lib/types';
 import { fromZonedTime } from 'date-fns-tz';
 
-function getEventDetails(ev: []): CleanEvent {
-	function getDeet(ev: [], property: string): string|Date {
-		const filtered = ev.filter(deet => deet[0] === property);
-		if (filtered.length === 0){
-			throw new Error(`Could not find property ${property} in event!`);
-		}
-		if (filtered[0][2] === "date-time"){
-			const tzName = filtered[0][1]['tzid'];
-			const dateStr = filtered[0][3];
-			return fromZonedTime(dateStr, tzName);
-		}else{
-			return filtered[0][3];
+function getEventDetails(ev: ICAL.Component): CleanEvent {
+
+	// Function to do all the dirty timezone parsing of an ical date-time
+	function mkDate(ev: ICAL.Component, propName: string): Date {
+		const icalDate = ev.getFirstPropertyValue(propName);
+
+		if (icalDate.timezone){ // parse non-ical timezone ourselves
+
+			// Non-standard, but timezones may start with a slash to indicate it's not defined in the ical
+			// file itself
+			const tzName = icalDate.timezone.startsWith('/') ?
+				icalDate.timezone.substring(1) : icalDate.timezone;
+
+			const parsedDate = fromZonedTime(icalDate.toString(), tzName);
+			if (isNaN(parsedDate.getTime())){
+				throw new Error(`Could not parse date '${icalDate.toString()}' with timezone '${tzName}'`);
+			}else{
+				return parsedDate;
+			}
+
+		}else{ // let ical library parse tz
+			return icalDate.toJSDate();
 		}
 	}
 
-	const summary = getDeet(ev, 'summary') as string;
-	const start = getDeet(ev, 'dtstart') as Date;
-	const end = getDeet(ev, 'dtend') as Date;
+	const summary: string = ev.getFirstPropertyValue('summary');
+	const start = mkDate(ev, 'dtstart');
+	const end = mkDate(ev, 'dtend');
 	return {summary, start, end};
 }
 
@@ -59,15 +69,14 @@ export async function POST({ request }) {
 
 		// https://github.com/kewisch/ical.js
 		const parsed = ICAL.parse(await resp.text());
-		const allEvents = parsed[2];
+		const calRoot = new ICAL.Component(parsed);
+		const allEvents = calRoot.getAllSubcomponents('vevent');
 
 		const calData = [];
 		for (const ev of allEvents) {
-			if (ev[0] !== 'vevent') continue;
-
 			let cleanEvent;
 			try {
-				cleanEvent = getEventDetails(ev[1]);
+				cleanEvent = getEventDetails(ev);
 			}catch(err){
 				// @ts-expect-error err is any
 				console.log(`Warning: skipping event. Error: ${err.message}`);
