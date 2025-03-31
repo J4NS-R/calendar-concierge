@@ -29,5 +29,5 @@ svelte-docker:
   script:
     - version=$(cat package.json | jq -r ".version")
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-    - docker build -t $IMG_PREFIX/calcon:$version .
-    - docker push $IMG_PREFIX/calcon:$version
+    - docker buildx create --use
+    - docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 --tag $IMG_PREFIX/calcon:$version --push .
