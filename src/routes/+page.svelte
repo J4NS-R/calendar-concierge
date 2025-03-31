@@ -8,7 +8,7 @@
 	import Toast from 'flowbite-svelte/Toast.svelte';
 	import { slide } from 'svelte/transition';
 	import InfoCircleSolid from 'flowbite-svelte-icons/InfoCircleSolid.svelte';
-	import { endLimit, startLimit } from '$lib/date-management';
+	import { dateLimits } from '$lib/date-management';
 
 	// Svelte assigns this via magic
 	export let data;
@@ -22,11 +22,11 @@
 	let calOptions;
 
 	function onCalViewChange(info) {
-		if (info.end > endLimit) {
+		if (info.end > dateLimits.getEndLimit() ) {
 			calendarElement.prev();
 			toastStatus = true;
 			warningMsg = 'late';
-		} else if (info.start < startLimit) {
+		} else if (info.start < dateLimits.getStartLimit()) {
 			calendarElement.next();
 			toastStatus = true;
 			warningMsg = 'early';

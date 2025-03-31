@@ -1,3 +1,7 @@
+jetbrains:
+  plugins:
+    - dev.blachut.svelte.lang
+
 tasks:
   - init: npm install
     command: |

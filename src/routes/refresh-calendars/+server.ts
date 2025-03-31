@@ -3,7 +3,7 @@ import * as schema from '$lib/server/schema';
 // @ts-expect-error IDK why this import is flagged
 import ICAL from 'ical.js';
 import { eq } from 'drizzle-orm';
-import { endLimit, startLimit } from '$lib/date-management';
+import { dateLimits } from '$lib/date-management';
 import { env } from '$env/dynamic/private';
 import type { CleanEvent } from '$lib/types';
 import { fromZonedTime } from 'date-fns-tz';
@@ -45,11 +45,15 @@ function durationH(ev: CleanEvent): number {
 }
 
 // TODO job manager with something like https://docs.quirrel.dev/getting-started/next-js
+// @ts-expect-error request is of type any
 export async function POST({ request }) {
 	const apiKey = request.headers.get('X-API-Key');
 	if (env.VITE_API_KEY !== apiKey) {
 		return new Response(JSON.stringify({ error: 'API key mismatch' }), { status: 403 });
 	}
+
+	const startLimit = dateLimits.getStartLimit();
+	const endLimit = dateLimits.getEndLimit();
 
 	const remoteIcss = await db.query.remoteIcs.findMany();
 
