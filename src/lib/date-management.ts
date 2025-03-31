@@ -1,21 +1,16 @@
 import { env } from '$env/dynamic/public';
 
 class DateLimits{
-	private readonly startLimit: Date;
-	private readonly endLimit: Date;
-	constructor() {
-		this.startLimit = new Date();
-		this.startLimit.setDate(this.startLimit.getDate() - parseInt(env.PUBLIC_PAST_DAYS));
-		this.endLimit = new Date();
-		this.endLimit.setDate(this.endLimit.getDate() + parseInt(env.PUBLIC_FUTURE_DAYS));
-	}
-
-	// This is technically not immutable, but should be treated as such.
+	// Calculate on each call.
 	public getStartLimit(): Date{
-		return this.startLimit;
+		const startLimit = new Date();
+		startLimit.setDate(startLimit.getDate() - parseInt(env.PUBLIC_PAST_DAYS));
+		return startLimit;
 	}
 	public getEndLimit(): Date{
-		return this.endLimit;
+		const endLimit = new Date();
+		endLimit.setDate(endLimit.getDate() + parseInt(env.PUBLIC_FUTURE_DAYS));
+		return endLimit;
 	}
 }
 
